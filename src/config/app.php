@@ -1,5 +1,7 @@
 <?php
 
+use Carbon\Laravel\ServiceProvider;
+
 return [
 
     /*
@@ -123,4 +125,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'providers' => ServiceProvider::defaultProviders()->merge([
+        Laravel\Fortify\FortifyServiceProvider::class,
+        App\Providers\FortifyServiceProvider::class,
+    ])->toArray(),
 ];

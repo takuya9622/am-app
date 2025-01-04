@@ -2,16 +2,17 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\CreateNewUser;
-use App\Actions\Fortify\ResetUserPassword;
-use App\Actions\Fortify\UpdateUserPassword;
-use App\Actions\Fortify\UpdateUserProfileInformation;
-use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Redirect;
+use Laravel\Fortify\Contracts\RegisterResponse;
+use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Fortify\Fortify;
+use Laravel\Fortify\Http\Controllers\RegisteredUserController;
+use App\Actions\Fortify\CreateNewUser;
+use App\Http\Requests\Auth\RegisterRequest;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -20,7 +21,47 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(RegisterResponse::class, function () {
+            return new class implements RegisterResponse {
+                public function toResponse($request)
+                {
+                    return Redirect::to('/attendance');
+                }
+            };
+        });
+
+        $this->app->singleton(CreatesNewUsers::class, CreateNewUser::class);
+
+        $this->app->bind(RegisteredUserController::class, function ($app) {
+            return new class(
+                $app->make(StatefulGuard::class),
+                $app->make(RegisterResponse::class)
+            ) extends RegisteredUserController {
+
+                protected $guard;
+                protected $registerResponse;
+
+                public function __construct(StatefulGuard $guard, RegisterResponse $registerResponse)
+                {
+                    $this->guard = $guard;
+                    $this->registerResponse = $registerResponse;
+                    parent::__construct($guard, $registerResponse);
+                }
+
+                public function store(Request $request, CreatesNewUsers $creator): RegisterResponse
+                {
+                    $validated = app(RegisterRequest::class)->validated();
+
+                    $user = $creator->create($validated);
+
+                    event(new Registered($user));
+
+                    $this->guard->login($user);
+
+                    return $this->registerResponse;
+                }
+            };
+        });
     }
 
     /**
@@ -28,19 +69,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Fortify::createUsersUsing(CreateNewUser::class);
-        Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
-        Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
-        Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
-
-        RateLimiter::for('login', function (Request $request) {
-            $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
-
-            return Limit::perMinute(5)->by($throttleKey);
-        });
-
-        RateLimiter::for('two-factor', function (Request $request) {
-            return Limit::perMinute(5)->by($request->session()->get('login.id'));
+        Fortify::registerView(function () {
+            return view('auth.register');
         });
     }
 }
