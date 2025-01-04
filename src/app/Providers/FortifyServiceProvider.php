@@ -138,5 +138,28 @@ class FortifyServiceProvider extends ServiceProvider
 
             $request->failedLogin();
         });
+        Fortify::loginView(function () {
+            return view('auth.login');
+        });
+
+        Fortify::authenticateUsing(function (LoginRequest $request) {
+            $credentials = $request->validated();
+
+            if (Auth::attempt($credentials)) {
+                $user = Auth::user();
+
+                if (!$user->hasVerifiedEmail()) {
+                    Auth::logout();
+
+                    throw ValidationException::withMessages([
+                        Fortify::username() => __('メールアドレスが認証されていません。'),
+                    ]);
+                }
+
+                return $user;
+            }
+
+            $request->failedLogin();
+        });
     }
 }
