@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\TimeConversionTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BreakRecord extends Model
 {
-    use TimeConversionTrait;
+    use HasFactory, TimeConversionTrait;
 
     protected $fillable = [
         'start_time',

@@ -53,13 +53,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasManyThrough(BreakRecord::class, AttendanceRecord::class, 'user_id', 'attendance_record_id');
     }
 
-    public function isAdmin(): bool
+    const ROLE_ADMIN = true;
+    const ROLE_USER = false;
+
+    public static function isAdmin($role): bool
     {
-        return $this->role === true;
+        return $role === self::ROLE_ADMIN;
     }
 
-    public function isUser(): bool
+    public static function isUser($role): bool
     {
-        return $this->role === false;
+        return $role === self::ROLE_USER;
     }
 }
