@@ -6,12 +6,16 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Controllers\RegisteredUserController;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 use App\Actions\Fortify\CreateNewUser;
+use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -62,15 +66,37 @@ class FortifyServiceProvider extends ServiceProvider
                 }
             };
         });
+
+        $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         Fortify::registerView(function () {
             return view('auth.register');
+        });
+        Fortify::loginView(function () {
+            return view('auth.login');
+        });
+
+        Fortify::authenticateUsing(function (LoginRequest $request) {
+            $credentials = $request->validated();
+
+            if (Auth::attempt($credentials)) {
+                $user = Auth::user();
+
+                if (!$user->hasVerifiedEmail()) {
+                    Auth::logout();
+
+                    throw ValidationException::withMessages([
+                        Fortify::username() => __('メールアドレスが認証されていません。'),
+                    ]);
+                }
+
+                return $user;
+            }
+
+            $request->failedLogin();
         });
     }
 }
