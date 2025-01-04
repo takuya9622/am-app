@@ -128,5 +128,6 @@ return [
     'providers' => ServiceProvider::defaultProviders()->merge([
         Laravel\Fortify\FortifyServiceProvider::class,
         App\Providers\FortifyServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
     ])->toArray(),
 ];
