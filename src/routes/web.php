@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('attendance', AttendanceController::class)
+        ->only(['index', 'store', 'update']);
 });
