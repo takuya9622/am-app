@@ -14,11 +14,15 @@
     @yield('css')
 </head>
 
-<body>
+@php
+$currentRoute = Route::currentRouteName();
+$isAuthPage = in_array($currentRoute, ['login', 'register']);
+@endphp
+<body class="{{ $isAuthPage ? 'auth-page' : 'function-page' }}">
     <header class="header">
         <div class="header-container">
             <div class="header-logo">
-                <a href="">
+                <a href="{{  route('attendance.index') }}">
                     <img src="{{ asset('images/logo.svg') }}" alt="COACHTECH">
                 </a>
             </div>
@@ -26,10 +30,10 @@
             @auth
             <div class="header-nav">
                 <ul class="menu-items">
-                    @if (auth()->user()->isAdmin())
+                    @if ($user->role == 'admin')
                     <li><a href="">勤怠一覧</a></li>
                     <li><a href="">スタッフ一覧</a></li>
-                    <li><a href="">申請一覧"></a></li>
+                    <li><a href="">申請一覧</a></li>
                     @else
                     <li><a href="">勤怠</a></li>
                     <li><a href="">勤怠一覧</a></li>

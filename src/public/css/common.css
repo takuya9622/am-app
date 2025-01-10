@@ -1,7 +1,13 @@
-body,
+.auth-page {
+    background-color: #FFF;
+}
+
+.function-page {
+    background-color: #F0EFF2;
+}
+
 html body main {
     font-family: 'Inter', 'Noto Sans JP', Arial, sans-serif;
-    background-color: #fff;
     color: #000;
 }
 
