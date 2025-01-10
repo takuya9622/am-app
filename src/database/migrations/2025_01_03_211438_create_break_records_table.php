@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('attendance_record_id')->constrained()->onDelete('cascade');
             $table->dateTime('start_time');
-            $table->dateTime('end_time');
-            $table->integer('total_break_minutes');
+            $table->dateTime('end_time')->nullable();
+            $table->integer('break_duration')->nullable();
             $table->timestamps();
         });
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Traits\TimeConversionTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class AttendanceRecord extends Model
@@ -11,9 +12,10 @@ class AttendanceRecord extends Model
     use HasFactory, TimeConversionTrait;
 
     protected $fillable = [
+        'user_id',
         'date',
-        'check_in',
-        'check_out',
+        'clock_in',
+        'clock_out',
         'total_work_minutes',
         'work_status',
         'remarks',
@@ -41,6 +43,11 @@ class AttendanceRecord extends Model
         self::STATUS_FINISHED_WORK => '退勤済',
     ];
 
+    public function getWorkStatusAttribute()
+    {
+        return self::WORK_STATUSES[$this->attributes['work_status']] ?? 'unknown';
+    }
+
     public const STATUS_PENDING = 0;
     public const STATUS_APPROVED = 1;
 
@@ -62,6 +69,8 @@ class AttendanceRecord extends Model
     protected function casts(): array
     {
         return [
+            'clock_in' => 'datetime',
+            'clock_out' => 'datetime',
             'work_status' => 'integer',
             'correction_request_status' => 'integer',
         ];
@@ -77,6 +86,18 @@ class AttendanceRecord extends Model
     public function getTotalWorkHoursAndMinutes(): array
     {
         $totalMinutes = $this->calculateTotalWorkMinutes();
+        return $this->convertMinutesToHoursAndMinutes($totalMinutes);
+    }
+
+    public function calculateTotalBreakMinutes(): int
+    {
+        return $this->breakRecords->sum->calculateDuration();
+    }
+
+
+    public function getTotalBreakHoursAndMinutes(): array
+    {
+        $totalMinutes = $this->calculateTotalBreakMinutes();
         return $this->convertMinutesToHoursAndMinutes($totalMinutes);
     }
 }

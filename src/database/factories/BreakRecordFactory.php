@@ -24,7 +24,7 @@ class BreakRecordFactory extends Factory
             'attendance_record_id' => AttendanceRecord::factory(),
             'start_time' => $start,
             'end_time' => $end,
-            'total_break_minutes' => $start->diffInMinutes($end),
+            'break_duration' => $start->diffInMinutes($end),
             'created_at' => now(),
             'updated_at' => now(),
         ];

@@ -40,8 +40,9 @@ class User extends Authenticatable implements MustVerifyEmail
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => 'boolean',
+            'email_verified_at' => 'datetime',
         ];
     }
 
@@ -58,13 +59,13 @@ class User extends Authenticatable implements MustVerifyEmail
     const ROLE_ADMIN = true;
     const ROLE_USER = false;
 
-    public static function isAdmin($role): bool
-    {
-        return $role === self::ROLE_ADMIN;
-    }
+    public const STAFF_ROLES = [
+        self::ROLE_ADMIN => 'admin',
+        self::ROLE_USER => 'user',
+    ];
 
-    public static function isUser($role): bool
+    public function getRoleAttribute()
     {
-        return $role === self::ROLE_USER;
+        return self::STAFF_ROLES[$this->attributes['role']] ?? 'unknown';
     }
 }
