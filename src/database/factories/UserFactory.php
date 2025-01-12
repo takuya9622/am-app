@@ -22,4 +22,22 @@ class UserFactory extends Factory
             'updated_at' => now(),
         ];
     }
+
+    public function admin()
+    {
+        return $this->state([
+            'role' => User::ROLE_ADMIN,
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+        ]);
+    }
+
+    public function testUser()
+    {
+        return $this->state([
+            'role' => User::ROLE_USER,
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+        ]);
+    }
 }

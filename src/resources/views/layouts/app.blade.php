@@ -18,6 +18,7 @@
 $currentRoute = Route::currentRouteName();
 $isAuthPage = in_array($currentRoute, ['login', 'register']);
 @endphp
+
 <body class="{{ $isAuthPage ? 'auth-page' : 'function-page' }}">
     <header class="header">
         <div class="header-container">
@@ -30,15 +31,15 @@ $isAuthPage = in_array($currentRoute, ['login', 'register']);
             @auth
             <div class="header-nav">
                 <ul class="menu-items">
-                    @if ($user->role == 'admin')
+                    @admin
                     <li><a href="">勤怠一覧</a></li>
                     <li><a href="">スタッフ一覧</a></li>
                     <li><a href="">申請一覧</a></li>
                     @else
-                    <li><a href="">勤怠</a></li>
-                    <li><a href="">勤怠一覧</a></li>
+                    <li><a href="{{  route('attendance.index') }}">勤怠</a></li>
+                    <li><a href="{{  route('attendance.list') }}">勤怠一覧</a></li>
                     <li><a href="">申請</a></li>
-                    @endif
+                    @endadmin
                     <li>
                         <form action="{{ route('logout') }}" method="POST" class="logout-form">
                             @csrf
