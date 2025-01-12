@@ -69,8 +69,10 @@ class AttendanceRecord extends Model
     protected function casts(): array
     {
         return [
+            'date' => 'date',
             'clock_in' => 'datetime',
             'clock_out' => 'datetime',
+            'total_work_minutes' => 'integer',
             'work_status' => 'integer',
             'correction_request_status' => 'integer',
         ];
@@ -78,26 +80,38 @@ class AttendanceRecord extends Model
 
     public function calculateTotalWorkMinutes(): int
     {
-        return $this->clock_in && $this->clock_out
-            ? $this->clock_in->diffInMinutes($this->clock_out)
-            : 0;
+        if (!$this->clock_in || !$this->clock_out) {
+            return 0;
+        }
+
+        $workMinutes = $this->clock_in->diffInMinutes($this->clock_out);
+        $breakMinutes = $this->calculateTotalBreakMinutes();
+
+        return $workMinutes - $breakMinutes;
     }
 
-    public function getTotalWorkHoursAndMinutes(): array
+    public function getFormattedWorkTime(): string
     {
-        $totalMinutes = $this->calculateTotalWorkMinutes();
-        return $this->convertMinutesToHoursAndMinutes($totalMinutes);
+        $totalWorkMinutes = $this->total_work_minutes;
+        if (is_null($totalWorkMinutes)) {
+            return '';
+        }
+
+        return $this->convertMinutesToHoursAndMinutes($totalWorkMinutes);
     }
 
     public function calculateTotalBreakMinutes(): int
     {
-        return $this->breakRecords->sum->calculateDuration();
+        return $this->breakRecords()->sum('break_duration');
     }
 
 
-    public function getTotalBreakHoursAndMinutes(): array
+    public function getFormattedBreakTime(): string
     {
-        $totalMinutes = $this->calculateTotalBreakMinutes();
-        return $this->convertMinutesToHoursAndMinutes($totalMinutes);
+        $totalBreakMinutes = $this->calculateTotalBreakMinutes();
+        if ($totalBreakMinutes === 0) return '';
+
+        return $this->convertMinutesToHoursAndMinutes($totalBreakMinutes);
     }
+
 }

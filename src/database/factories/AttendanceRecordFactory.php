@@ -26,7 +26,7 @@ class AttendanceRecordFactory extends Factory
             'clock_in' => $clockIn,
             'clock_out' => $clockOut,
             'total_work_minutes' => $clockIn->diffInMinutes($clockOut),
-            'work_status' => 1,
+            'work_status' => 3,
             'remarks' => $this->faker->sentence,
             'created_at' => now(),
             'updated_at' => now(),

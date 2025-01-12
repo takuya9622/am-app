@@ -6,4 +6,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth'])->group(function () {
     Route::resource('attendance', AttendanceController::class)
         ->only(['index', 'store', 'update']);
+    Route::get('attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
 });

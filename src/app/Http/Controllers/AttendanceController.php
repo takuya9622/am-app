@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AttendanceRecord;
 use App\Models\BreakRecord;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
@@ -23,7 +24,7 @@ class AttendanceController
         $user = Auth::user();
         $attendanceRecord = $this->getAttendanceRecord($user);
 
-        return view('staff/attendance', compact('now', 'user', 'attendanceRecord'));
+        return view('staff/attendance', compact('now', 'attendanceRecord'));
     }
 
     public function store()
@@ -107,5 +108,34 @@ class AttendanceController
         }
 
         return redirect()->route('attendance.index');
+    }
+
+    public function list(Request $request)
+    {
+        $currentMonth = $request->query('month', now()->format('Y/m'));
+        $currentMonthStart = Carbon::createFromFormat('Y/m', $currentMonth)->startOfMonth();
+        $currentMonthEnd = Carbon::createFromFormat('Y/m', $currentMonth)->endOfMonth();
+
+        $attendanceRecords = AttendanceRecord::with(['user', 'breakRecords'])
+        ->where('user_id', Auth::id())
+        ->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
+        ->get();
+
+        $attendanceRecords->transform(function ($attendanceRecord) {
+            $attendanceRecord->formatted_date = $attendanceRecord->date->isoFormat('MM/DD(ddd)');
+            $attendanceRecord->formatted_clock_in = $attendanceRecord->clock_in->format('H:i');
+            $attendanceRecord->formatted_clock_out = $attendanceRecord->clock_out
+            ? $attendanceRecord->clock_out->format('H:i')
+            : '';
+            $attendanceRecord->formatted_break_time = $attendanceRecord->getFormattedBreakTime();
+            $attendanceRecord->formatted_work_time = $attendanceRecord->getFormattedWorkTime();
+
+            return $attendanceRecord;
+        });
+
+        $previousMonth = $currentMonthStart->copy()->subMonth()->format('Y/m');
+        $nextMonth = $currentMonthStart->copy()->addMonth()->format('Y/m');
+
+        return view('staff/list', compact('currentMonth', 'attendanceRecords', 'previousMonth', 'nextMonth'));
     }
 }
