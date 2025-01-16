@@ -138,4 +138,30 @@ class AttendanceController
 
         return view('staff/list', compact('currentMonth', 'attendanceRecords', 'previousMonth', 'nextMonth'));
     }
-}
+
+    public function edit($attendanceId)
+    {
+        $userName = Auth::user()->name;
+        $attendanceRecord = AttendanceRecord::with('breakRecords')->find($attendanceId);
+        $correctionRequestStatus = $attendanceRecord->correction_request_status;
+
+        $attendanceRecord->formatted_year = $attendanceRecord->date->isoFormat('Y年');
+        $attendanceRecord->formatted_date = $attendanceRecord->date->isoFormat('M月D日');
+        $attendanceRecord->formatted_clock_in = $attendanceRecord->clock_in->format('H:i');
+        $attendanceRecord->formatted_clock_out = $attendanceRecord->clock_out
+            ? $attendanceRecord->clock_out->format('H:i')
+            : '';
+
+        $attendanceRecord->breakRecords->transform(function ($breakRecord) {
+            $breakRecord->formatted_break_start_time = $breakRecord->start_time->format('H:i');
+            $breakRecord->formatted_break_end_time = $breakRecord->end_time
+            ? $breakRecord->end_time->format('H:i')
+            : '';
+
+            return $breakRecord;
+        });
+
+        return view('staff/detail', compact('userName', 'attendanceRecord', 'correctionRequestStatus'));
+    }
+
+}//161624
