@@ -20,6 +20,7 @@ class AttendanceRecordSeeder extends Seeder
                 $attendanceRecord = AttendanceRecord::factory()->create([
                     'user_id' => $user->id,
                     'date' => $startDate->format('Y-m-d'),
+                    'remarks' => '電車遅延のため',
                 ]);
 
                 BreakRecord::factory(2)->create([

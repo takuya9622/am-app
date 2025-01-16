@@ -56,6 +56,11 @@ class AttendanceRecord extends Model
         self::STATUS_APPROVED => '承認済',
     ];
 
+    public function getCorrectionRequestStatusAttribute()
+    {
+        return self::CORRECTION_STATUSES[$this->attributes['correction_request_status']] ?? 'unknown';
+    }
+
     public function scopePendingCorrection($query)
     {
         return $query->where('correction_request_status', self::STATUS_PENDING);
