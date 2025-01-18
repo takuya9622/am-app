@@ -21,6 +21,19 @@ class AttendanceRecord extends Model
         'remarks',
         'correction_request_status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'date' => 'date',
+            'clock_in' => 'datetime',
+            'clock_out' => 'datetime',
+            'total_work_minutes' => 'integer',
+            'work_status' => 'integer',
+            'correction_request_status' => 'integer',
+        ];
+    }
+
     public function breakRecords()
     {
         return $this->hasMany(BreakRecord::class, 'attendance_record_id');
@@ -71,18 +84,6 @@ class AttendanceRecord extends Model
         return $query->where('correction_request_status', self::STATUS_APPROVED);
     }
 
-    protected function casts(): array
-    {
-        return [
-            'date' => 'date',
-            'clock_in' => 'datetime',
-            'clock_out' => 'datetime',
-            'total_work_minutes' => 'integer',
-            'work_status' => 'integer',
-            'correction_request_status' => 'integer',
-        ];
-    }
-
     public function calculateTotalWorkMinutes(): int
     {
         if (!$this->clock_in || !$this->clock_out) {
@@ -104,6 +105,17 @@ class AttendanceRecord extends Model
 
         return $this->convertMinutesToHoursAndMinutes($totalWorkMinutes);
     }
+
+    public function getClockInAttribute($value)
+    {
+        return Carbon::parse($value)->setSeconds(0);
+    }
+
+    public function getClockOutAttribute($value)
+    {
+        return Carbon::parse($value)->setSeconds(0);
+    }
+
 
     public function calculateTotalBreakMinutes(): int
     {

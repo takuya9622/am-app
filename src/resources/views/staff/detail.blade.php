@@ -8,15 +8,30 @@
 <div class="detail-container">
     <div class="detail-header">
         <h1 class="detail-title">勤怠詳細</h1>
-        <div class="error-container">
+        <div class="message-container">
             @foreach ($errors->all() as $error)
             <p class="error">{{ $error }}</p>
             @endforeach
+
+            @if(session('message'))
+            <p class="notice">{{ session('message') }}</p>
+            @endif
         </div>
     </div>
     <form method="POST" class="attendance-correction-form" action="{{ route('attendance.correct', ['attendanceId' => $attendanceRecord->id]) }}" novalidate>
         @csrf
         @method('PATCH')
+
+        <style>
+            select {
+                width: 120px;
+                text-align: center;
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+            }
+        </style>
+
         <table class="detail-table">
             <tr>
                 <th>名前</th>
@@ -25,9 +40,23 @@
             <tr>
                 <th>日付</th>
                 <td class="attendance-table-content">
-                    <x-editable-field :isApprovalPending="$correctionRequestStatus" type="text" name="year" :value="$attendanceRecord->formatted_year" />
+                    <x-selectable-field
+                        :isApprovalPending="$correctionRequestStatus"
+                        id="year"
+                        name="year"
+                        type="year"
+                        :startYear="2000"
+                        :endYear="$attendanceRecord->formatted_year"
+                        :selected="$attendanceRecord->formatted_year"
+                        :value="$attendanceRecord->formatted_year" />
                     <span>&nbsp;</span>
-                    <x-editable-field :isApprovalPending="$correctionRequestStatus" type="text" name="date" :value="$attendanceRecord->formatted_date" class="table-row-end" />
+                    <x-selectable-field
+                        :isApprovalPending="$correctionRequestStatus"
+                        id="date"
+                        name="date"
+                        type="date"
+                        :selected="$attendanceRecord->formatted_date"
+                        :value="$attendanceRecord->formatted_date" />
                 </td>
             </tr>
             <tr>
@@ -66,5 +95,4 @@
         @endif
     </form>
 </div>
-
 @endsection

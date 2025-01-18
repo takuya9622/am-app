@@ -17,9 +17,10 @@ class AttendanceRecordSeeder extends Seeder
             $endDate = now()->addMonth()->endOfMonth();
 
             while ($startDate <= $endDate) {
-                $attendanceRecord = AttendanceRecord::factory()->create([
+                $attendanceRecord = AttendanceRecord::factory()
+                ->withDate($startDate->format('Y-m-d'))
+                ->create([
                     'user_id' => $user->id,
-                    'date' => $startDate->format('Y-m-d'),
                     'remarks' => '電車遅延のため',
                 ]);
 
