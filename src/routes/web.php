@@ -8,4 +8,5 @@ Route::middleware(['auth'])->group(function () {
         ->only(['index', 'store', 'update']);
     Route::get('attendance/list', [AttendanceController::class, 'list'])->name('attendance.list');
     Route::get('attendance/detail/{attendanceId}', [AttendanceController::class, 'edit'])->name('attendance.detail');
+    Route::patch('attendance/detail/{attendanceId}', [AttendanceController::class, 'correct'])->name('attendance.correct');
 });
