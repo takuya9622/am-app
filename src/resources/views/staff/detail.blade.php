@@ -88,7 +88,9 @@
                 </td>
             </tr>
         </table>
-        @if($correctionRequestStatus === '承認待ち')
+        @if(Route::is('admin.correction.request'))
+        <button type="submit" class="correction-button">承認</button>
+        @elseif($correctionRequestStatus === '承認待ち')
         <p class="correction-request-pending">*承認待ちのため修正はできません。</p>
         @else
         <button type="submit" class="correction-button">修正</button>

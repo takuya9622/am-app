@@ -15,6 +15,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.attendance.list');
     Route::get('admin/staff/list', [AdminController::class, 'staff'])
         ->name('admin.staff.index');
+    Route::get('stamp_correction_request/list', [CorrectionController::class, 'list'])
+        ->name('correction.request.list');
 });
 
 Route::middleware(['auth', 'staff'])->group(function () {
