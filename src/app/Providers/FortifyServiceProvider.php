@@ -73,6 +73,10 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
             public function toResponse($request)
             {
+                if ($request->is('admin/login')) {
+                    return redirect()->route('admin.list');
+                }
+
                 return redirect(route('login'));
             }
         });
@@ -81,10 +85,10 @@ class FortifyServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Fortify::registerView(function () {
-            return view('auth.register');
+            return view('auth.auth');
         });
         Fortify::loginView(function () {
-            return view('auth.login');
+            return view('auth.auth');
         });
 
         Fortify::authenticateUsing(function (LoginRequest $request) {
@@ -97,7 +101,17 @@ class FortifyServiceProvider extends ServiceProvider
                     Auth::logout();
 
                     throw ValidationException::withMessages([
-                        Fortify::username() => __('メールアドレスが認証されていません。'),
+                        Fortify::username() => __('メールアドレスが認証されていません'),
+                    ]);
+                }
+
+                $isAdminLogin = $request->is('admin/login');
+
+                if ($isAdminLogin && $user->role !== 'admin') {
+                    Auth::logout();
+
+                    throw ValidationException::withMessages([
+                        Fortify::username() => __('ログイン情報が登録されていません'),
                     ]);
                 }
 

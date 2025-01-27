@@ -16,7 +16,7 @@
 
 @php
 $currentRoute = Route::currentRouteName();
-$isAuthPage = in_array($currentRoute, ['login', 'register']);
+$isAuthPage = in_array($currentRoute, ['login', 'register', 'admin.login']);
 @endphp
 
 <body class="{{ $isAuthPage ? 'auth-page' : 'function-page' }}">
