@@ -138,6 +138,9 @@ class AttendanceController extends Controller
         $previousMonth = $currentMonthStart->copy()->subMonth()->format('Y/m');
         $nextMonth = $currentMonthStart->copy()->addMonth()->format('Y/m');
 
+        $tab = null;
+        $staff = null;
+
         return view('staff/list', compact('currentMonth', 'attendanceRecords', 'previousMonth', 'nextMonth'));
     }
 
@@ -168,7 +171,6 @@ class AttendanceController extends Controller
 
     public function correct(CorrectionRequest $request, $attendanceId)
     {
-        //dd(array_map('gettype', $request->all()));
         $correctionRequestData = $request->validated();
         $attendanceRecord = AttendanceRecord::with('breakRecords')->find($attendanceId);
 
