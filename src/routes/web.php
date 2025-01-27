@@ -9,6 +9,10 @@ Route::middleware('guest')->group(function () {
     Route::post('admin/login', [AuthenticatedSessionController::class, 'store']);
 });
 
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('admin/attendance/list', [AdminController::class, 'list'])
+        ->name('admin.attendance.list');
+});
 
 Route::middleware(['auth', 'staff'])->group(function () {
     Route::resource('attendance', AttendanceController::class)
