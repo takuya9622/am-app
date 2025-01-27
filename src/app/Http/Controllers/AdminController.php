@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\AttendanceRecord;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    public function staff()
+    {
+        $staff = User::where('role', 'staff')->get();
+
+        return view('staff/staff-index', compact('staff'));
+    }
     public function list(Request $request)
     {
         $todayFormatted = $request->query('date', now()->format('Y/m/d'));
