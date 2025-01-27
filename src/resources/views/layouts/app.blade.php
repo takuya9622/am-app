@@ -32,7 +32,7 @@ $isAuthPage = in_array($currentRoute, ['login', 'register', 'admin.login']);
             <div class="header-nav">
                 <ul class="menu-items">
                     @admin
-                    <li><a href="">勤怠一覧</a></li>
+                    <li><a href="{{ route('admin.attendance.list') }}">勤怠一覧</a></li>
                     <li><a href="">スタッフ一覧</a></li>
                     <li><a href="">申請一覧</a></li>
                     @else
