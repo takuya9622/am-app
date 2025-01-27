@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 
-class AttendanceController
+class AttendanceController extends Controller
 {
     private function getAttendanceRecord(User $user)
     {
