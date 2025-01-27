@@ -61,7 +61,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public const STAFF_ROLES = [
         self::ROLE_ADMIN => 'admin',
-        self::ROLE_USER => 'user',
+        self::ROLE_USER => 'staff',
     ];
 
     public function getRoleAttribute()
