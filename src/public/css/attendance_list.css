@@ -79,7 +79,32 @@
     font-weight: bold;
 }
 
+.items-tab {
+    padding-left: 30px;
+    border-bottom: 1px solid #000;
+}
+
+.tabs {
+    list-style-type: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+}
+
+.tabs a {
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+    color: #5F5F5F;
+}
+
+.active-tab a {
+    color: #000;
+    font-weight: bold;
+}
+
 .attendance-table-container {
+    margin-top: 20px;
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

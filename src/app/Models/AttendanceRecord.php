@@ -66,7 +66,7 @@ class AttendanceRecord extends Model
 
     public const CORRECTION_STATUSES = [
         self::STATUS_PENDING => '承認待ち',
-        self::STATUS_APPROVED => '承認済',
+        self::STATUS_APPROVED => '承認済み',
     ];
 
     public function getCorrectionRequestStatusAttribute()
