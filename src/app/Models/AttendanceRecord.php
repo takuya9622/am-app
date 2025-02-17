@@ -29,7 +29,6 @@ class AttendanceRecord extends Model
             'clock_out' => 'datetime',
             'total_work_minutes' => 'integer',
             'work_status' => 'integer',
-            'correction_request_status' => 'integer',
         ];
     }
 
