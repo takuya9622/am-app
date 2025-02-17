@@ -13,16 +13,13 @@ class AttendanceRecordSeeder extends Seeder
     public function run(): void
     {
         User::all()->each(function ($user) {
-            $startDate = now()->subMonth()->startOfMonth();
-            $endDate = now()->addMonth()->endOfMonth();
+            $startDate = now()->subMonths(2)->startOfMonth();
+            $endDate = now()->endOfMonth();
 
             while ($startDate <= $endDate) {
                 $attendanceRecord = AttendanceRecord::factory()
                 ->withDate($startDate->format('Y-m-d'))
-                ->create([
-                    'user_id' => $user->id,
-                    'remarks' => '電車遅延のため',
-                ]);
+                ->create(['user_id' => $user->id,]);
 
                 BreakRecord::factory(2)->create([
                     'attendance_record_id' => $attendanceRecord->id,

@@ -41,7 +41,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return [
             'password' => 'hashed',
-            'role' => 'boolean',
+            'is_admin' => 'boolean',
             'email_verified_at' => 'datetime',
         ];
     }
@@ -57,15 +57,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     const ROLE_ADMIN = true;
-    const ROLE_USER = false;
+    const ROLE_STAFF = false;
 
     public const STAFF_ROLES = [
         self::ROLE_ADMIN => 'admin',
-        self::ROLE_USER => 'staff',
+        self::ROLE_STAFF => 'staff',
     ];
 
     public function getRoleAttribute()
     {
-        return self::STAFF_ROLES[$this->attributes['role']] ?? 'unknown';
+        return self::STAFF_ROLES[$this->attributes['is_admin']] ?? 'unknown';
     }
 }

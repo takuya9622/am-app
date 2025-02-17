@@ -15,8 +15,8 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
-            'password' => bcrypt('password'),
-            'role' => User::ROLE_USER,
+            'password' => 'password',
+            'is_admin' => User::ROLE_STAFF,
             'email_verified_at' => now(),
             'created_at' => now(),
             'updated_at' => now(),
@@ -26,7 +26,7 @@ class UserFactory extends Factory
     public function admin()
     {
         return $this->state([
-            'role' => User::ROLE_ADMIN,
+            'is_admin' => User::ROLE_ADMIN,
             'name' => 'Admin User',
             'email' => 'admin@example.com',
         ]);
@@ -35,7 +35,7 @@ class UserFactory extends Factory
     public function testUser()
     {
         return $this->state([
-            'role' => User::ROLE_USER,
+            'is_admin' => User::ROLE_STAFF,
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);

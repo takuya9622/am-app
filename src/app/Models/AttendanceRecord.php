@@ -18,8 +18,6 @@ class AttendanceRecord extends Model
         'clock_out',
         'total_work_minutes',
         'work_status',
-        'remarks',
-        'correction_request_status',
     ];
 
     protected function casts(): array
@@ -30,13 +28,17 @@ class AttendanceRecord extends Model
             'clock_out' => 'datetime',
             'total_work_minutes' => 'integer',
             'work_status' => 'integer',
-            'correction_request_status' => 'integer',
         ];
     }
 
     public function breakRecords()
     {
         return $this->hasMany(BreakRecord::class, 'attendance_record_id');
+    }
+
+    public function correctionRequests()
+    {
+        return $this->hasMany(AttendanceCorrection::class, 'attendance_record_id');
     }
 
     public function user()
@@ -59,29 +61,6 @@ class AttendanceRecord extends Model
     public function getWorkStatusAttribute()
     {
         return self::WORK_STATUSES[$this->attributes['work_status']] ?? 'unknown';
-    }
-
-    public const STATUS_PENDING = 0;
-    public const STATUS_APPROVED = 1;
-
-    public const CORRECTION_STATUSES = [
-        self::STATUS_PENDING => '承認待ち',
-        self::STATUS_APPROVED => '承認済み',
-    ];
-
-    public function getCorrectionRequestStatusAttribute()
-    {
-        return self::CORRECTION_STATUSES[$this->attributes['correction_request_status']] ?? 'unknown';
-    }
-
-    public function scopePendingCorrection($query)
-    {
-        return $query->where('correction_request_status', self::STATUS_PENDING);
-    }
-
-    public function scopeApprovedCorrection($query)
-    {
-        return $query->where('correction_request_status', self::STATUS_APPROVED);
     }
 
     public function calculateTotalWorkMinutes(): int
