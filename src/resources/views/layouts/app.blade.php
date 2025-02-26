@@ -34,15 +34,7 @@ $isAuthPage = in_array($currentRoute, ['login', 'register', 'admin.login']);
                     @admin
                     <li><a href="{{ route('admin.attendance.list') }}">勤怠一覧</a></li>
                     <li><a href="{{ route('admin.staff.index') }}">スタッフ一覧</a></li>
-<<<<<<< Updated upstream
                     <li><a href="{{ route('correction.request.list') }}">申請一覧</a></li>
-=======
-<<<<<<< Updated upstream
-                    <li><a href="">申請一覧</a></li>
-=======
-                    <li><a href="{{ route('correction.request.list') }}">申請一覧</a></li>
->>>>>>> Stashed changes
->>>>>>> Stashed changes
                     @else
                     <li><a href="{{  route('attendance.index') }}">勤怠</a></li>
                     <li><a href="{{  route('attendance.list') }}">勤怠一覧</a></li>
