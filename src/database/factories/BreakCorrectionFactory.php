@@ -19,11 +19,11 @@ class BreakCorrectionFactory extends Factory
      */
     public function definition(): array
     {
-        $start = $this->faker->optional()->dateTimeBetween('10:00:00', '12:30:00');
-        $end = $this->faker->optional()->dateTimeBetween('13:00:00', '15:30:00');
+        $start = $this->faker->dateTimeBetween('10:00:00', '12:30:00');
+        $end = $this->faker->dateTimeBetween('13:00:00', '15:30:00');
 
         return [
-            'break_record_id' => BreakRecord::factory(),
+            'break_record_id' => BreakRecord::inRandomOrder()->first()->id,
             'correction_start_time' => $start,
             'correction_end_time' => $end,
             'created_at' => now(),

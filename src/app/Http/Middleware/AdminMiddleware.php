@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class AdminMiddleware
             abort(403, 'Unauthorized');
         }
 
-        $request->merge(['is_admin' => $user->role === 'admin']);
+        $request->merge(['is_admin' => $user->is_admin === User::ROLE_ADMIN]);
 
         return $next($request);
     }

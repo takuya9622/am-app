@@ -14,12 +14,12 @@ class BreakCorrectionSeeder extends Seeder
      */
     public function run(): void
     {
-        $breakRecordIds = BreakRecord::orderBy('id')->pluck('id')->toArray();
-        static $index = 0;
-
-        BreakCorrection::factory(120)->create()->each(function ($post) use ($breakRecordIds, &$index) {
-            $post->update(['break_record_id' => $breakRecordIds[$index % count($breakRecordIds)]]);
-            $index += 5;
+        BreakRecord::whereHas('attendanceRecord', function ($query) {
+            $query->where('correction_request_status', 0);
+        })->get()->each(function ($breakRecord) {
+            BreakCorrection::factory()->create([
+                'break_record_id' => $breakRecord->id,
+            ]);
         });
     }
 }

@@ -16,41 +16,41 @@ class AttendanceCorrection extends Model
         'correction_date',
         'correction_clock_in',
         'correction_clock_out',
-        'correction_remarks',
-        'correction_request_status',
+        'remarks',
+        'status',
     ];
 
     protected function casts(): array
     {
         return [
+            'attendance_record_id' => 'integer',
             'correction_date' => 'date',
             'correction_clock_in' => 'datetime',
             'correction_clock_out' => 'datetime',
-            'total_work_minutes' => 'integer',
-            'work_status' => 'integer',
+            'status' => 'integer',
         ];
     }
 
-    public const STATUS_PENDING = 0;
-    public const STATUS_APPROVED = 1;
+    const STATUS_APPROVED = 1;
+    const STATUS_PENDING = 0;
 
-    public const CORRECTION_STATUSES = [
-        self::STATUS_PENDING => '承認待ち',
-        self::STATUS_APPROVED => '承認済み',
+    public const REQUEST_STATUS = [
+        self::STATUS_APPROVED => 'approved',
+        self::STATUS_PENDING => 'pending',
     ];
 
-    public function getCorrectionRequestStatusAttribute()
+    public function getRequestStatus()
     {
-        return self::CORRECTION_STATUSES[$this->attributes['correction_request_status']] ?? 'unknown';
-    }
-
-    public function scopePendingCorrection($query)
-    {
-        return $query->where('correction_request_status', self::STATUS_PENDING);
+        return self::REQUEST_STATUS[$this->attributes['status']] ?? 'unknown';
     }
 
     public function scopeApprovedCorrection($query)
     {
-        return $query->where('correction_request_status', self::STATUS_APPROVED);
+        return $query->where('status', self::STATUS_APPROVED);
+    }
+
+    public function attendanceRecord()
+    {
+        return $this->belongsTo(AttendanceRecord::class, 'attendance_record_id');
     }
 }

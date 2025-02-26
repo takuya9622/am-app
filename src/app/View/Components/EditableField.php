@@ -6,19 +6,28 @@ use Illuminate\View\Component;
 
 class EditableField extends Component
 {
+    public $name;
     public $isApprovalPending;
     public $type;
-    public $name;
     public $value;
     public $class;
+    public $isApproved;
 
-    public function __construct($isApprovalPending, $name, $type = 'time', $value = null, $class = '')
+    public function __construct(
+        $name,
+        $isApprovalPending = null,
+        $type = 'time',
+        $value = null,
+        $class = '',
+        $isApproved = null,
+        )
     {
         $this->isApprovalPending = $isApprovalPending;
         $this->type = $type;
         $this->name = $name;
         $this->value = $value;
         $this->class = $class;
+        $this->isApproved = ($isApproved ?? true);
     }
 
     public function getOldKey()

@@ -1,4 +1,4 @@
-@if($isApprovalPending === '承認待ち')
+@if($isApprovalPending === '承認待ち' || $isApproved === true)
 <p class="form-content">{{ $value }}</p>
 @else
 <select class="form-control" id="{{ $id }}" name="{{ $name }}">

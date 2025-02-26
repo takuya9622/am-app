@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
+use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Laravel\Fortify\Fortify;
@@ -18,6 +19,8 @@ use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 use App\Actions\Fortify\CreateNewUser;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Route;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -70,13 +73,28 @@ class FortifyServiceProvider extends ServiceProvider
 
         $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
 
-        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+        $this->app->instance(LoginResponse::class, new class implements LoginResponse {
             public function toResponse($request)
             {
                 if ($request->is('admin/login')) {
-                    return redirect()->route('admin.list');
+                    session(['acting_as_admin' => true]);
+                    return redirect()->route('admin.attendance.list');
                 }
 
+                return Redirect::to('/attendance');
+            }
+        });
+
+        $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
+            public function toResponse($request)
+            {
+                $actingAsAdmin = session('acting_as_admin', false);
+                if ($actingAsAdmin) {
+                    session()->forget('acting_as_admin');
+                    return redirect()->route('admin.login');
+                }
+
+                session()->forget('acting_as_admin');
                 return redirect(route('login'));
             }
         });
@@ -107,7 +125,7 @@ class FortifyServiceProvider extends ServiceProvider
 
                 $isAdminLogin = $request->is('admin/login');
 
-                if ($isAdminLogin && $user->role !== 'admin') {
+                if ($isAdminLogin && $user->is_admin !== User::ROLE_ADMIN) {
                     Auth::logout();
 
                     throw ValidationException::withMessages([

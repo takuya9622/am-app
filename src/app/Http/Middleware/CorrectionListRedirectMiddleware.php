@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class StaffMiddleware
+class CorrectionListRedirectMiddleware
 {
     /**
      * Handle an incoming request.
@@ -20,11 +20,13 @@ class StaffMiddleware
         $user = Auth::user();
 
         if (!$user) {
-            abort(403, 'Unauthorized');
+            return redirect()->route('login');
         }
 
-        $request->merge(['is_admin' => $user->is_admin === User::ROLE_STAFF]);
-
-        return $next($request);
+        if ($user->is_admin === User::ROLE_ADMIN && session('acting_as_admin')) {
+            return redirect()->route('admin.correction.list', $request->query());
+        } else {
+        return redirect()->route('attendance.correction.list', $request->query());
+        }
     }
 }

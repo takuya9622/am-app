@@ -15,9 +15,10 @@ class SelectableField extends Component
     public $selected;
     public $isLeapYear;
     public $value;
+    public $isApproved;
 
     public function __construct(
-        $isApprovalPending,
+        $isApprovalPending = null,
         $id,
         $name,
         $type,
@@ -25,6 +26,7 @@ class SelectableField extends Component
         $endYear = null,
         $selected = null,
         $value = null,
+        $isApproved = null,
     ) {
         $this->isApprovalPending = $isApprovalPending;
         $this->id = $id;
@@ -35,6 +37,7 @@ class SelectableField extends Component
         $this->selected = $selected;
         $this->isLeapYear = $this->checkLeapYear($this->endYear);
         $this->value = $value;
+        $this->isApproved = ($isApproved ?? true);
     }
 
     private function checkLeapYear($year)

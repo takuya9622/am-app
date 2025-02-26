@@ -18,19 +18,11 @@
             @endif
         </div>
     </div>
-    <form method="POST" class="attendance-correction-form" action="{{ route('attendance.correct', ['attendanceId' => $attendanceRecord->id]) }}" novalidate>
+    <form method="POST" class="attendance-correction-form" action="{{ session('acting_as_admin') ? route('admin.approve', ['attendanceId' => $attendanceRecord->id]) : route('attendance.correct', ['attendanceId' => $attendanceRecord->id]) }}" novalidate>
         @csrf
+        @if(session('acting_as_admin'))
         @method('PATCH')
-
-        <style>
-            select {
-                width: 120px;
-                text-align: center;
-                appearance: none;
-                -webkit-appearance: none;
-                -moz-appearance: none;
-            }
-        </style>
+        @endif
 
         <table class="detail-table">
             <tr>
@@ -41,7 +33,8 @@
                 <th>日付</th>
                 <td class="attendance-table-content">
                     <x-selectable-field
-                        :isApprovalPending="$correctionRequestStatus"
+                        :isApprovalPending="$correctionRequestStatus ?? null"
+                        :isApproved="(bool) $isApproved"
                         id="year"
                         name="year"
                         type="year"
@@ -51,7 +44,8 @@
                         :value="$attendanceRecord->formatted_year" />
                     <span>&nbsp;</span>
                     <x-selectable-field
-                        :isApprovalPending="$correctionRequestStatus"
+                        :isApprovalPending="$correctionRequestStatus ?? null"
+                        :isApproved="(bool) $isApproved"
                         id="date"
                         name="date"
                         type="date"
@@ -62,25 +56,43 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td class="attendance-table-content">
-                    <x-editable-field :isApprovalPending="$correctionRequestStatus" name="clock_in" :value="$attendanceRecord->formatted_clock_in" />
+                    <x-editable-field
+                        :isApprovalPending="$correctionRequestStatus ?? null"
+                        :isApproved="(bool) $isApproved"
+                        name="clock_in"
+                        :value="$attendanceRecord->formatted_clock_in" />
                     <span>～</span>
-                    <x-editable-field :isApprovalPending="$correctionRequestStatus" name="clock_out" :value="$attendanceRecord->formatted_clock_out" class="table-row-end" />
+                    <x-editable-field
+                        :isApprovalPending="$correctionRequestStatus ?? null"
+                        :isApproved="(bool) $isApproved"
+                        name="clock_out"
+                        :value="$attendanceRecord->formatted_clock_out"
+                        class="table-row-end" />
                 </td>
             </tr>
             @foreach($attendanceRecord->breakRecords as $breakRecord)
             <tr>
                 <th>休憩{{ $loop->iteration > 1 ? $loop->iteration : '' }}</th>
                 <td class="attendance-table-content">
-                    <x-editable-field :isApprovalPending="$correctionRequestStatus" name="break_start_time[{{ $loop->index }}]" :value="$breakRecord->formatted_break_start_time" />
+                    <x-editable-field
+                        :isApprovalPending="$correctionRequestStatus ?? null"
+                        :isApproved="(bool) $isApproved"
+                        name="break_start_time[{{ $loop->index }}]"
+                        :value="$breakRecord->formatted_break_start_time" />
                     <span>～</span>
-                    <x-editable-field :isApprovalPending="$correctionRequestStatus" name="break_end_time[{{ $loop->index }}]" :value="$breakRecord->formatted_break_end_time" class="table-row-end" />
+                    <x-editable-field
+                        :isApprovalPending="$correctionRequestStatus ?? null"
+                        :isApproved="(bool) $isApproved"
+                        name="break_end_time[{{ $loop->index }}]"
+                        :value="$breakRecord->formatted_break_end_time"
+                        class="table-row-end" />
                 </td>
             </tr>
             @endforeach
             <tr class="detail-remarks">
                 <th>備考</th>
                 <td class="attendance-table-content" colspan="3">
-                    @if($correctionRequestStatus === '承認待ち')
+                    @if($correctionRequestStatus === '承認待ち' || $isApproved === true)
                     <p class="form-content-remarks">{{ $attendanceRecord->remarks }}</p>
                     @else
                     <textarea name="remarks" rows="3">{{ old('remarks') ?? $attendanceRecord->remarks }}</textarea>
@@ -88,7 +100,9 @@
                 </td>
             </tr>
         </table>
-        @if(Route::is('admin.correction.request'))
+        @if($isApproved === true)
+        <label class="approved-label">承認済み</label>
+        @elseif(session('acting_as_admin'))
         <button type="submit" class="correction-button">承認</button>
         @elseif($correctionRequestStatus === '承認待ち')
         <p class="correction-request-pending">*承認待ちのため修正はできません。</p>

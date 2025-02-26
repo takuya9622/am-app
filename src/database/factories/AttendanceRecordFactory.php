@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\AttendanceRecord;
 use App\Models\User;
+use App\Traits\FactoryHelpers;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
 
@@ -12,6 +13,7 @@ use Carbon\Carbon;
  */
 class AttendanceRecordFactory extends Factory
 {
+    use FactoryHelpers;
     /**
      * Define the model's default state.
      *

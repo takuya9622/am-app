@@ -14,8 +14,8 @@ return new class extends Migration
             $table->date('correction_date')->nullable();
             $table->datetime('correction_clock_in')->nullable();
             $table->datetime('correction_clock_out')->nullable();
-            $table->text('correction_remarks')->nullable();
-            $table->tinyInteger('correction_request_status');
+            $table->text('remarks');
+            $table->tinyInteger('status')->nullable();
             $table->timestamps();
         });
     }

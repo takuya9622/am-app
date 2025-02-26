@@ -16,6 +16,7 @@ return new class extends Migration
             $table->dateTime('clock_out')->nullable();
             $table->integer('total_work_minutes')->nullable();
             $table->tinyInteger('work_status')->nullable();
+            $table->tinyInteger('correction_request_status')->nullable();
             $table->timestamps();
             $table->unique(['user_id', 'date']);
         });

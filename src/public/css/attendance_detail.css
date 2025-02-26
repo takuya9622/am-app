@@ -71,6 +71,14 @@
     display: none;
 }
 
+select {
+    width: 120px;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
 .attendance-table-content .form-control {
     width: 17%;
     height: auto;
@@ -141,6 +149,21 @@ span {
     color: #ff0000;
     opacity: 50%;
     font-weight: bold;
+}
+
+.approved-label {
+    display: inline-block;
+    width: 15%;
+    height: auto;
+    margin-top: 60px;
+    padding: 10px;
+    background-color: #696969;
+    color: #fff;
+    font-size: 26px;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-radius: 5px;
 }
 
 .correction-button {

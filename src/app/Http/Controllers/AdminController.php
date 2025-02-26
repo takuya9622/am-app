@@ -11,15 +11,14 @@ class AdminController extends Controller
 {
     public function staff()
     {
-        $staff = User::where('role', 'staff')->get();
+        $staff = User::all();
 
         return view('staff/staff-index', compact('staff'));
     }
-<<<<<<< HEAD
-=======
 
     public function staffAttendance(Request $request, $staffId)
     {
+        $isApproved = false;
         $currentMonth = $request->query('month', now()->format('Y/m'));
         $currentMonthStart = Carbon::createFromFormat('Y/m', $currentMonth)->startOfMonth();
         $currentMonthEnd = Carbon::createFromFormat('Y/m', $currentMonth)->endOfMonth();
@@ -48,10 +47,9 @@ class AdminController extends Controller
 
         $tab = null;
 
-        return view('staff/list',compact('staff', 'currentMonth', 'attendanceRecords', 'previousMonth', 'nextMonth'));
+        return view('staff/list',compact('staff', 'currentMonth', 'attendanceRecords', 'previousMonth', 'nextMonth', 'isApproved'));
     }
 
->>>>>>> function
     public function list(Request $request)
     {
         $todayFormatted = $request->query('date', now()->format('Y/m/d'));
@@ -74,12 +72,13 @@ class AdminController extends Controller
             return $attendanceRecord;
         });
 
-        $ttttt = Carbon::createFromFormat('Y/m/d', $todayFormatted);
-        $yesterday = $ttttt->copy()->subDay()->format('Y/m/d');
-        $tomorrow = $ttttt->copy()->addDay()->format('Y/m/d');
+        $thisMonth = Carbon::createFromFormat('Y/m/d', $todayFormatted);
+        $yesterday = $thisMonth->copy()->subDay()->format('Y/m/d');
+        $tomorrow = $thisMonth->copy()->addDay()->format('Y/m/d');
 
         $tab = null;
+        $isApproved = false;
 
-        return view('staff/list', compact('todayFormatted', 'attendanceRecords', 'yesterday', 'tomorrow'));
+        return view('staff/list', compact('todayFormatted', 'attendanceRecords', 'yesterday', 'tomorrow', 'isApproved'));
     }
 }

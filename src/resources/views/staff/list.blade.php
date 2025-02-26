@@ -17,6 +17,8 @@
         :yesterday="$yesterday ?? null"
         :tomorrow="$tomorrow ?? null" />
 
-    <x-attendance-table :attendanceRecords="$attendanceRecords" />
+    <x-attendance-table
+        :attendanceRecords="$attendanceRecords"
+        :isApproved="(bool) $isApproved ?? false" />
 </div>
 @endsection

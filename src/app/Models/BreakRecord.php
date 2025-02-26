@@ -32,6 +32,11 @@ class BreakRecord extends Model
         return $this->belongsTo(AttendanceRecord::class, 'attendance_record_id');
     }
 
+    public function breakCorrections()
+    {
+        return $this->hasMany(BreakCorrection::class, 'break_record_id');
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');

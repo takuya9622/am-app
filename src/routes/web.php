@@ -2,10 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AttendanceController;
-<<<<<<< HEAD
-=======
 use App\Http\Controllers\CorrectionController;
->>>>>>> function
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -14,34 +11,33 @@ Route::middleware('guest')->group(function () {
     Route::post('admin/login', [AuthenticatedSessionController::class, 'store']);
 });
 
+Route::get('stamp_correction_request/list', function () {
+    })->middleware(['auth', 'role.redirect'])->name('correction.request.list');
+
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('admin/attendance/list', [AdminController::class, 'list'])
         ->name('admin.attendance.list');
     Route::get('admin/staff/list', [AdminController::class, 'staff'])
         ->name('admin.staff.index');
-<<<<<<< HEAD
-=======
     Route::get('admin/attendance/staff/{staffId}', [AdminController::class, 'staffAttendance'])
         ->name('admin.attendance.staff');
-    Route::get('stamp_correction_request/list', [CorrectionController::class, 'list'])
-        ->name('correction.request.list');
-    Route::get('admin/attendance/staff/{staffId}', [AdminController::class, 'staffAttendance'])
-        ->name('admin.attendance.staff');
->>>>>>> function
-    Route::get('stamp_correction_request/list', [CorrectionController::class, 'list'])
-        ->name('correction.request.list');
+    Route::get('admin/correction_request/list', [CorrectionController::class, 'list'])
+        ->name('admin.correction.list');
+    Route::patch('attendance/detail/{attendanceId}', [CorrectionController::class, 'correctionApprove'])
+        ->name('admin.approve');
 });
 
-Route::middleware(['auth', 'staff'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::resource('attendance', AttendanceController::class)
         ->only(['index', 'store', 'update']);
     Route::get('attendance/list', [AttendanceController::class, 'list'])
         ->name('attendance.list');
-<<<<<<< HEAD
-=======
     Route::get('attendance/detail/{attendanceId}', [AttendanceController::class, 'edit'])
         ->name('attendance.detail');
-    Route::patch('attendance/detail/{attendanceId}', [AttendanceController::class, 'correct'])
+    Route::post('attendance/detail/{attendanceId}', [AttendanceController::class, 'correctionRequest'])
         ->name('attendance.correct');
->>>>>>> function
+    Route::get('attendance/correction_request/list', [CorrectionController::class, 'list'])
+        ->name('attendance.correction.list');
+    Route::get('approved/detail/{correctionId}', [CorrectionController::class, 'approvedDetail'])
+        ->name('approved.detail');
 });

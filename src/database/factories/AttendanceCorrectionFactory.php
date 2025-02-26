@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\AttendanceCorrection;
 use App\Models\AttendanceRecord;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,13 +19,20 @@ class AttendanceCorrectionFactory extends Factory
      */
     public function definition(): array
     {
+        $attendanceRecord = AttendanceRecord::inRandomOrder()->first();
+        $date = $attendanceRecord->date;
+        $clockIn = Carbon::parse($date)->setTime(
+            $this->faker->numberBetween(8, 10),
+            $this->faker->numberBetween(0, 59)
+        );
+        $clockOut = (clone $clockIn)->addHours(8);
+
         return [
-            'attendance_record_id' => AttendanceRecord::inRandomOrder()->first()->id,
-            'correction_date' => optional($this->faker->optional()->dateTimeThisMonth())->format('Y-m-d'),
-            'correction_clock_in' => optional($this->faker->optional())->time(),
-            'correction_clock_out' => optional($this->faker->optional())->time(),
-            'correction_remarks' => $this->faker->optional()->randomElement(["電車遅延のため"]),
-            'correction_request_status' => AttendanceCorrection::STATUS_PENDING,
+            'attendance_record_id' => $attendanceRecord->id,
+            'correction_date' => $date,
+            'correction_clock_in' => $clockIn->format('Y-m-d H:i:s'),
+            'correction_clock_out' => $clockOut->format('Y-m-d H:i:s'),
+            'remarks' => "電車遅延のため",
         ];
     }
 }

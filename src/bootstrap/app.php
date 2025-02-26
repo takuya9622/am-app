@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\StaffMiddleware;
+use App\Http\Middleware\CorrectionListRedirectMiddleware;
+use App\Http\Middleware\RedirectAfterLogout;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -16,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => AdminMiddleware::class,
             'staff' => StaffMiddleware::class,
+            'role.redirect' => CorrectionListRedirectMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

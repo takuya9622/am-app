@@ -2,7 +2,7 @@
     <table class="attendance-table">
         <thead>
             <tr>
-                @if(Route::is('correction.request.list'))
+                @if(Route::is('*.correction.list'))
                 <th>状態</th>
                 <th>名前</th>
                 <th>対象日時</th>
@@ -19,7 +19,19 @@
             </tr>
         </thead>
         <tbody>
-            @if(Route::is('correction.request.list'))
+            @if($isApproved === true)
+            @foreach ($attendanceRecords as $attendanceRecord)
+            <tr class="attendance-table-row">
+                <td>{{ $attendanceRecord->correction_request_status }}</td>
+                <td>{{ $attendanceRecord->staff_name }}</td>
+                <td>{{ $attendanceRecord->formatted_date }}</td>
+                <td>{{ $attendanceRecord->remarks }}</td>
+                <td>{{ $attendanceRecord->formatted_updated_at }}</td>
+                <td class="attendance-detail"><a href="{{ route('approved.detail', ['correctionId' => $attendanceRecord->correction_id]) }}">詳細</a></td>
+            </tr>
+            @endforeach
+
+            @elseif(Route::is('*.correction.list'))
             @foreach ($attendanceRecords as $attendanceRecord)
             <tr class="attendance-table-row">
                 <td>{{ $attendanceRecord->correction_request_status }}</td>
