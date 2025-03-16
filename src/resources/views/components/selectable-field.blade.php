@@ -13,8 +13,7 @@
     @foreach (range(1, 31) as $day)
     @if (!($month == 2 && $day > ($isLeapYear ? 29 : 28)) &&
     !in_array($month, [4, 6, 9, 11]) || $day <= 30)
-    <option value="{{ $month }}月{{ $day }}日"
-    {{ $month.'月'.$day.'日' == $selected ? 'selected' : '' }}>
+    <option value="{{ $month }}月{{ $day }}日" {{ $month.'月'.$day.'日' == $selected ? 'selected' : '' }}>
     {{ $month }}月{{ $day }}日
     </option>
     @endif

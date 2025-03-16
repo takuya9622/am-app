@@ -24,7 +24,7 @@ class AttendanceRecord extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'date',
+            'date' => 'date:Y-m-d',
             'clock_in' => 'datetime',
             'clock_out' => 'datetime',
             'total_work_minutes' => 'integer',

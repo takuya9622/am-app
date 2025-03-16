@@ -25,6 +25,8 @@ Route::middleware(['auth', 'admin'])->group(function () {
         ->name('admin.correction.list');
     Route::patch('attendance/detail/{attendanceId}', [CorrectionController::class, 'correctionApprove'])
         ->name('admin.approve');
+    Route::patch('attendance/raw_correction/{attendanceId}', [CorrectionController::class, 'applyRawCorrection'])
+        ->name('admin.raw.correction');
 });
 
 Route::middleware(['auth'])->group(function () {

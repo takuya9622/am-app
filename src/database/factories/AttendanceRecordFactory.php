@@ -21,19 +21,16 @@ class AttendanceRecordFactory extends Factory
      */
     public function definition(): array
     {
-        $date = $this->faker->dateTimeThisMonth->format('Y-m-d');
+        $date = now()->format('Y-m-d');
         $clockIn = Carbon::parse($date)->setTime(
             $this->faker->numberBetween(8, 10),
             $this->faker->numberBetween(0, 59)
         );
-        $clockOut = (clone $clockIn)->addHours(8);
 
         return [
             'user_id' => User::factory(),
             'date' => $date,
             'clock_in' => $clockIn->format('Y-m-d H:i:s'),
-            'clock_out' => $clockOut->format('Y-m-d H:i:s'),
-            'total_work_minutes' => $clockIn->diffInMinutes($clockOut),
             'work_status' => AttendanceRecord::STATUS_FINISHED_WORK,
             'created_at' => now(),
             'updated_at' => now(),

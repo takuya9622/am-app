@@ -21,7 +21,7 @@ class BreakRecordFactory extends Factory
         $start = Carbon::instance($this->faker->dateTimeBetween('10:00:00', '15:30:00'));
         $end = (clone $start)->modify('+30 minutes');
         return [
-            'attendance_record_id' => AttendanceRecord::factory(),
+            //'attendance_record_id' => AttendanceRecord::factory(),
             'start_time' => $start,
             'end_time' => $end,
             'break_duration' => $start->diffInMinutes($end),

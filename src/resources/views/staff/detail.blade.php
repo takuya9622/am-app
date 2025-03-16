@@ -18,7 +18,17 @@
             @endif
         </div>
     </div>
-    <form method="POST" class="attendance-correction-form" action="{{ session('acting_as_admin') ? route('admin.approve', ['attendanceId' => $attendanceRecord->id]) : route('attendance.correct', ['attendanceId' => $attendanceRecord->id]) }}" novalidate>
+    <form
+        method="POST"
+        class="attendance-correction-form"
+        @if(session('acting_as_admin') && $correctionRequestStatus=="承認待ち" )
+        action="{{ route('admin.approve', ['attendanceId' => $attendanceRecord->id]) }}"
+        @elseif(session('acting_as_admin'))
+        action="{{ route('admin.raw.correction', ['attendanceId' => $attendanceRecord->id]) }}"
+        @else
+        action="{{ route('attendance.correct', ['attendanceId' => $attendanceRecord->id]) }}"
+        @endif
+        novalidate>
         @csrf
         @if(session('acting_as_admin'))
         @method('PATCH')
@@ -102,6 +112,8 @@
         </table>
         @if($isApproved === true)
         <label class="approved-label">承認済み</label>
+        @elseif(session('acting_as_admin') && $correctionRequestStatus !== '承認待ち')
+        <button type="submit" class="correction-button">修正</button>
         @elseif(session('acting_as_admin'))
         <button type="submit" class="correction-button">承認</button>
         @elseif($correctionRequestStatus === '承認待ち')

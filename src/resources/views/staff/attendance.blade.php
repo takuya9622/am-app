@@ -35,7 +35,7 @@
             @method('PUT')
             @csrf
             <input type="hidden" name="action" value="startBreak">
-            <button href="" class="button break">休憩入</button>
+            <button class="button break">休憩入</button>
         </form>
 
         @elseif($attendanceRecord->work_status == '休憩中')
@@ -43,7 +43,7 @@
             @method('PUT')
             @csrf
             <input type="hidden" name="action" value="endBreak">
-            <button href="" class="button break">休憩戻</button>
+            <button class="button break">休憩戻</button>
         </form>
 
         @else($attendanceRecord->work_status == '退勤済')

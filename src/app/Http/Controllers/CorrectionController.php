@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CorrectionRequest;
 use App\Models\AttendanceCorrection;
 use App\Models\AttendanceRecord;
 use App\Models\BreakCorrection;
@@ -10,7 +11,9 @@ use App\Models\User;
 use Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\DB;
 
 class CorrectionController extends Controller
 {
@@ -158,5 +161,43 @@ class CorrectionController extends Controller
         $attendanceRecord->breakRecords = $attendanceRecord->attendanceRecord->breakRecords;
 
         return view('staff/detail', compact('userName', 'attendanceRecord', 'correctionRequestStatus', 'isApproved'));
+    }
+
+    public function applyRawCorrection(CorrectionRequest $request, $attendanceId)
+    {
+        DB::transaction(function () use ($request, $attendanceId) {
+            $attendanceRecord = AttendanceRecord::with('breakRecords')->findOrFail($attendanceId);
+            $requestedAttendanceRecord = $request->validated();
+
+            $formattedDate = Carbon::createFromFormat('Yn月j日', $requestedAttendanceRecord['year'] . $requestedAttendanceRecord['date'])->format('Y-m-d');
+            $formattedClockIn = $this->combineDateAndTime($formattedDate, $requestedAttendanceRecord['clock_in']);
+            $formattedClockOut = $this->combineDateAndTime($formattedDate, $requestedAttendanceRecord['clock_out']);
+            $formattedBreakStartTimes = array_values(Arr::get($requestedAttendanceRecord, 'break_start_time', []));
+            $formattedBreakEndTimes = array_values(Arr::get($requestedAttendanceRecord, 'break_end_time', []));
+
+            $attendanceRecord->update([
+                'date' => $formattedDate,
+                'clock_in' => $formattedClockIn,
+                'clock_out' => $formattedClockOut,
+                'correction_request_status' => AttendanceRecord::STATUS_APPROVED,
+            ]);
+
+            $breakRecords = $attendanceRecord->breakRecords;
+            foreach ($breakRecords as $index => $breakRecord) {
+                $breakRecord->update([
+                    'start_time' => $formattedBreakStartTimes[$index] ?? null,
+                    'end_time' => $formattedBreakEndTimes[$index] ?? null,
+                    'break_duration' => $breakRecord->calculateBrakeDuration(),
+                ]);
+            }
+        });
+
+        return redirect()->back()->with('message', '修正を適用しました');
+    }
+
+
+    private function combineDateAndTime($date, $time)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i', "$date $time")->format('Y-m-d H:i:s');
     }
 }

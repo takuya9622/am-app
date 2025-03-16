@@ -122,8 +122,13 @@ class AttendanceController extends Controller
 
         $attendanceRecords = AttendanceRecord::with(['user', 'breakRecords'])
         ->where('user_id', Auth::id())
-        ->whereBetween('date', [$currentMonthStart, $currentMonthEnd])
-        ->get();
+        ->get()
+        ->filter(function ($record) use ($currentMonthStart, $currentMonthEnd) {
+            $datetime = Carbon::parse($record->date)->format('Y-m-d H:i:s');
+
+            return $datetime >= $currentMonthStart && $datetime <= $currentMonthEnd;
+        })
+        ->values();
 
         $attendanceRecords->transform(function ($attendanceRecord) {
             $attendanceRecord->formatted_date = $attendanceRecord->date->isoFormat('MM/DD(ddd)');
@@ -150,8 +155,8 @@ class AttendanceController extends Controller
     public function edit($attendanceId)
     {
         $isApproved = false;
-        $userName = Auth::user()->name;
-        $attendanceRecord = AttendanceRecord::with('breakRecords')->find($attendanceId);
+        $attendanceRecord = AttendanceRecord::with('breakRecords','user')->find($attendanceId);
+        $userName = $attendanceRecord->user->name;
         $correctionRequestStatus = $attendanceRecord->correction_request_status;
 
         if ($correctionRequestStatus === '承認待ち') {
