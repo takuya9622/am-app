@@ -233,6 +233,7 @@ DBの部分を以下のように変更
 docker-compose exec php bash
 php artisan test tests/Feature
 ```
+期間内にテストメソッドを全て記述できませんでした
 
 <p align="right">(<a href="#top">トップへ</a>)</p>
 
