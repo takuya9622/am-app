@@ -5,7 +5,6 @@ namespace Tests\Helpers;
 use App\Models\AttendanceRecord;
 use App\Models\BreakRecord;
 use App\Models\User;
-use Mockery;
 
 trait CreatesTestData
 {

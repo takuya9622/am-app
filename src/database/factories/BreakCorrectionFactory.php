@@ -2,9 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\AttendanceRecord;
 use App\Models\BreakRecord;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

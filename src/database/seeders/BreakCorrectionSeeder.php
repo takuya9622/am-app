@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\BreakCorrection;
 use App\Models\BreakRecord;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class BreakCorrectionSeeder extends Seeder

@@ -6,7 +6,6 @@ use App\Models\AttendanceCorrection;
 use App\Models\AttendanceRecord;
 use App\Models\BreakRecord;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class AttendanceRecordSeeder extends Seeder
